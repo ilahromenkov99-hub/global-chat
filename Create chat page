@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🌍 Global Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .chat-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            color: black;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        #chat {
+            border: 2px solid #4CAF50;
+            height: 400px;
+            overflow-y: scroll;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 10px;
+            background: #f9f9f9;
+        }
+        #message {
+            width: 70%;
+            padding: 12px;
+            border: 2px solid #4CAF50;
+            border-radius: 25px;
+            font-size: 16px;
+        }
+        button {
+            padding: 12px 25px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+        button:hover {
+            background: #45a049;
+            transform: scale(1.05);
+        }
+        .message {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 10px;
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+        }
+        .my-message {
+            background: #e8f5e8;
+            border-left: 4px solid #4CAF50;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌍 Глобальный Чат</h1>
+    <p>Откройте эту страницу на нескольких устройствах!</p>
+    
+    <div class="chat-container">
+        <div id="chat"></div>
+        
+        <div style="display: flex; align-items: center;">
+            <input type="text" id="message" placeholder="Введите ваше сообщение...">
+            <button onclick="sendMessage()">📤 Отправить</button>
+        </div>
+    </div>
+
+    <script>
+        // Загрузка сообщений из localStorage
+        function loadMessages() {
+            const saved = localStorage.getItem('globalChat');
+            if (saved) {
+                document.getElementById('chat').innerHTML = saved;
+                document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+            }
+        }
+        
+        // Отправка сообщения
+        function sendMessage() {
+            const input = document.getElementById('message');
+            const chat = document.getElementById('chat');
+            const message = input.value.trim();
+            
+            if (message) {
+                const timestamp = new Date().toLocaleTimeString();
+                const messageHTML = `<div class="message my-message">
+                    <strong>Вы (${timestamp}):</strong><br>${message}
+                </div>`;
+                
+                chat.innerHTML += messageHTML;
+                localStorage.setItem('globalChat', chat.innerHTML);
+                
+                input.value = '';
+                chat.scrollTop = chat.scrollHeight;
+                
+                // Имитация ответа друга
+                setTimeout(() => {
+                    const replies = [
+                        'Привет! Как дела?',
+                        'Интересное сообщение!',
+                        'Я тоже здесь!',
+                        'Отличный чат!',
+                        'Продолжаем общение!'
+                    ];
+                    const randomReply = replies[Math.floor(Math.random() * replies.length)];
+                    
+                    const replyHTML = `<div class="message">
+                        <strong>Друг (${new Date().toLocaleTimeString()}):</strong><br>${randomReply}
+                    </div>`;
+                    
+                    chat.innerHTML += replyHTML;
+                    localStorage.setItem('globalChat', chat.innerHTML);
+                    chat.scrollTop = chat.scrollHeight;
+                }, 2000);
+            }
+        }
+        
+        // Отправка по Enter
+        document.getElementById('message').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // Автозагрузка сообщений
+        loadMessages();
+        
+        // Автообновление между вкладками
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'globalChat') {
+                document.getElementById('chat').innerHTML = e.newValue;
+                document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+            }
+        });
+    </script>
+</body>
+</html>
